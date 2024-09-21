@@ -1,0 +1,109 @@
+const quizData = [
+    {
+        question: "What is the capital of France?",
+        a: "Berlin",
+        b: "Madrid",
+        c: "Paris",
+        d: "Rome",
+        correct: "c"
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        a: "Earth",
+        b: "Mars",
+        c: "Jupiter",
+        d: "Saturn",
+        correct: "b"
+    },
+    {
+        question: "Who wrote 'To Kill a Mockingbird'?",
+        a: "Harper Lee",
+        b: "Jane Austen",
+        c: "Mark Twain",
+        d: "Ernest Hemingway",
+        correct: "a"
+    },
+    {
+        question: "What is the largest mammal in the world?",
+        a: "Elephant",
+        b: "Blue Whale",
+        c: "Giraffe",
+        d: "Orca",
+        correct: "b"
+    },
+];
+
+let currentQuiz = 0;
+let score = 0;
+
+function loadQuiz() {
+    const currentQuizData = quizData[currentQuiz];
+    quiz.innerHTML = `
+        <h2>${currentQuizData.question}</h2>
+        <label>
+            <input type="radio" name="answer" value="a">
+            ${currentQuizData.a}
+        </label>
+        <label>
+            <input type="radio" name="answer" value="b">
+            ${currentQuizData.b}
+        </label>
+        <label>
+            <input type="radio" name="answer" value="c">
+            ${currentQuizData.c}
+        </label>
+        <label>
+            <input type="radio" name="answer" value="d">
+            ${currentQuizData.d}
+        </label>
+    `;
+
+    document.getElementById('prev').classList.toggle('hidden', currentQuiz === 0);
+    document.getElementById('next').textContent = currentQuiz === quizData.length - 1 ? 'Submit' : 'Next';
+}
+
+function getSelected() {
+    const answers = document.querySelectorAll('input[name="answer"]');
+    for (const answer of answers) {
+        if (answer.checked) {
+            return answer.value;
+        }
+    }
+    return undefined;
+}
+
+function showResults() {
+    quiz.classList.add('hidden');
+    resultContainer.innerHTML = `
+        <h2>Your Score: ${score} out of ${quizData.length}</h2>
+        <button onclick="location.reload()">Reload Quiz</button>
+    `;
+    resultContainer.classList.remove('hidden');
+}
+
+document.getElementById('next').addEventListener('click', () => {
+    const answer = getSelected();
+    if (answer) {
+        if (answer === quizData[currentQuiz].correct) {
+            score++;
+        }
+        currentQuiz++;
+        if (currentQuiz < quizData.length) {
+            loadQuiz();
+        } else {
+            showResults();
+        }
+    } else {
+        alert("Please select an answer!");
+    }
+});
+
+document.getElementById('prev').addEventListener('click', () => {
+    if (currentQuiz > 0) {
+        currentQuiz--;
+        loadQuiz();
+    }
+});
+
+// Load the first quiz question
+loadQuiz();
